@@ -1,8 +1,6 @@
 FROM python:3
 
-#user-commands
+ENTRYPOINT ["tail -f /dev/null"]
 
-WORKDIR /usr/src/app
+ENTRYPOINT ["tail", "-f", "/dev/null"]
 
-
-ENTRYPOINT ["bash", "-l"]

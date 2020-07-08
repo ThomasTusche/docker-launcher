@@ -1,7 +1,12 @@
 from tkinter import *
 from tkinter import filedialog
-from dockerfile_generator import *
 from functools import partial
+
+# import dockerfile_generator methods
+from dockerfile_generator import *
+
+# import info pop up methods
+from info_popup import *
 
 #import os to get the absolut path of the py files and list the templates content
 from os import path
@@ -12,15 +17,14 @@ from os import chdir
 #import platform to get the operating system
 from platform import system
 
-# functions for the tkinter interface
 def mount_file():
     filename = filedialog.askopenfilename()
-    select_folder_tkvar.set(f"Script to mount: {filename}")
+    select_folder_tkvar.set(filename)
     return
 
 def mount_folder():
     filename = filedialog.askdirectory()
-    select_folder_tkvar.set(f"Folder to mount: {filename}")
+    select_folder_tkvar.set(filename)
 
 def save():
     filename = templates_tkvar.get()
@@ -52,8 +56,6 @@ def get_dockerfile_text(dockerfile):
         docker_file_content.insert("1.0", data)        
     return data
 
-
-
 # Find operating system for setting the file path
 operating_system = system()
 
@@ -68,49 +70,94 @@ elif operating_system == "Mac":
     #template_path = f"{path.dirname(path.abspath(__file__))}\\templates"
     chdir(path.dirname(path.abspath(__file__)))
 
-# list all template files to display in tkinter OptionMenu
 docker_templates = [f for f in listdir(".")]
 docker_templates.append("New Template")
 
 # Creating the Tkinter GUI
 root = Tk()
 root.title("Docker Launcher")
+root.iconphoto(False, PhotoImage(file='../logo.png'))
+#root.iconbitmap("tt_logo.bmp")
 
+# creating the mainframe on which everythin is displayed
 mainframe = Frame(root)
 mainframe.grid(column=0,row=0, sticky=(N,W,E,S) )
 mainframe.columnconfigure(0, weight = 1)
 mainframe.rowconfigure(0, weight = 1)
 mainframe.pack(pady = 40, padx = 40)
 
-templates_tkvar = StringVar(root)
-templates_tkvar.set("Choose Template")
+# Display the dropdown menu to choose a docker template
+Label(mainframe, text="Choose Template:").grid(row = 1, column = 0)
+templates_tkvar = StringVar()
+templates_tkvar.set("")
 docker_menu = OptionMenu(mainframe, templates_tkvar, *docker_templates, command=get_dockerfile_text)
-docker_menu.grid(row=1, column=0)
+docker_menu.grid(row=1, column=1)
 
-Label(mainframe, text="Enter Docker Flags").grid(row = 2, column = 0)
-docker_flags_input = Entry(mainframe)
-docker_flags_input.grid(row=3, column=0)
+# The input box for docker command
+Label(mainframe, text="Command:").grid(row = 2, column = 0)
+docker_command = Entry(mainframe)
+docker_command.grid(row=2, column=1)
 
-select_folder_tkvar = StringVar(root)
-select_folder_tkvar.set("Select Script or Folder to mount: ")
-Label(mainframe, textvariable=select_folder_tkvar).grid(row = 4, column = 0)
-Button(mainframe, text='File', command=mount_file).grid(row=4, column=1)
-Button(mainframe, text='Folder', command=mount_folder).grid(row=4, column=2)
-#Label(mainframe, textvariable=select_folder_tkvar).grid(row = 5, column = 0)
+command_info = Label(mainframe, text="?")
+command_info.grid(row = 2, column = 2)
+CreateToolTip(command_info, text = "Enter own command, e.g. echo Hello World")
 
-Label(mainframe, text="Dockerfile").grid(row = 6, column = 0)
-docker_file_content=Text(mainframe)
-docker_file_content.grid(row = 7, column = 0)
+# The input box for a docker entrypoint
+Label(mainframe, text="Entrypoint:").grid(row = 3, column = 0)
+docker_entrypoint = Entry(mainframe)
+docker_entrypoint.grid(row=3, column=1)
+
+entrypoint_info = Label(mainframe, text="?")
+entrypoint_info.grid(row = 3, column = 2)
+CreateToolTip(entrypoint_info, text = "Enter own entrypoint here, e.g. echo Hello World")
+
+# Input box to enter a container hostname
+Label(mainframe, text="Hostname:").grid(row = 4, column = 0)
+docker_hostname = Entry(mainframe)
+docker_hostname.grid(row=4, column=1)
+
+hostname_info = Label(mainframe, text="?")
+hostname_info.grid(row = 4, column = 2)
+CreateToolTip(hostname_info, text = "Enter Container's Hostname here")
+
+# Input box for enter docker port to open
+Label(mainframe, text="Ports:").grid(row = 5, column = 0)
+docker_ports = Entry(mainframe)
+docker_ports.grid(row=5, column=1)
+
+docker_info = Label(mainframe, text="?")
+docker_info.grid(row = 5, column = 2)
+CreateToolTip(docker_info, text = "Enter ports in dict format where keys are the docker ports and values are the host port, e.g 80:8080 ")
+
+# Checkbox to decide whether a container will be removed after closing
+Label(mainframe, text="Remove Container after run:").grid(row = 6, column = 0)
+yes_tickbox_tkvar = IntVar()
+Checkbutton(mainframe, text="Yes", variable=yes_tickbox_tkvar).grid(row = 6, column = 1)
+
+remove_container_info = Label(mainframe, text="?")
+remove_container_info.grid(row = 6, column = 2)
+CreateToolTip(remove_container_info, text = "If enabled the container will be removed after its run")
+
+# Button to choose the mount folder
+Label(mainframe, text="Mount folder:").grid(row = 7, column = 0)
+select_folder_tkvar = StringVar()
+select_folder_tkvar.set("")
+Label(mainframe, textvariable=select_folder_tkvar).grid(row = 7, column = 1)
+Button(mainframe, text='Folder', command=mount_folder).grid(row=7, column=2)
+
+mount_info = Label(mainframe, text="?")
+mount_info.grid(row = 7, column = 3)
+CreateToolTip(mount_info, text = "Choose a folder which will be mounte to tmp/ in the container")
+
+# Textbox to display the Dockerfile content
+Label(mainframe, text="Dockerfile:").grid(row = 9, column = 0)
+docker_file_content = Text(mainframe)
+docker_file_content.grid(row = 9, column = 1)
 docker_file_content.insert(END, get_dockerfile_text("Choose Template"))
 
-Button(mainframe, text='Run', command=lambda: DockerFileCreator.run_container(templates_tkvar.get())).grid(row=8, column=0)
-Button(mainframe, text='Build Image', command=lambda: DockerFileCreator.build_image(templates_tkvar.get())).grid(row=8, column=1)
-Button(mainframe, text='Save', command=save).grid(row=8, column=2)
-Button(mainframe, text='Save as', command=save_as).grid(row=8, column=3)
-#Button(mainframe, text='Run', command=lambda: DockerFileCreator.run_container(f"{path.dirname(path.abspath(__file__))}\\templates\\{tkvar.get()}").grid(row=6, column=0)
-# Button(mainframe, text='Display Dockerfile', command=DockerFileCreator.test).grid(row=6, column=1)
-# Button(mainframe, text='Refresh', command=DockerFileCreator.test).grid(row=6, column=2)
-# Button(mainframe, text='Upload File', command=DockerFileCreator.test).grid(row=6, column=3)
-# Button(mainframe, text='Save Template', command=DockerFileCreator.test).grid(row=6, column=4)
+Button(mainframe, text='Run', command=lambda: DockerFileCreator.run_container(templates_tkvar.get(),docker_command.get(),docker_entrypoint.get(),docker_hostname.get(),docker_ports.get(),yes_tickbox_tkvar.get(),select_folder_tkvar.get())).grid(row=10, column=0)
+Button(mainframe, text='Build Image', command=lambda: DockerFileCreator.build_image(templates_tkvar.get())).grid(row=10, column=1)
+Button(mainframe, text='Save', command=save).grid(row=10, column=2)
+Button(mainframe, text='Save as', command=save_as).grid(row=10, column=3)
 
 root.mainloop()

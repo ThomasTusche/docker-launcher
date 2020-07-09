@@ -149,13 +149,25 @@ mount_info = Label(mainframe, text="?")
 mount_info.grid(row = 7, column = 3)
 CreateToolTip(mount_info, text = "Choose a folder which will be mounte to tmp/ in the container")
 
+# Chose path within the container to mount the folder 
+Label(mainframe, text="Mount Target:").grid(row = 8, column = 0)
+docker_path = Entry(mainframe)
+docker_path.grid(row=8, column=1)
+
+rw_tickbox_tkvar = IntVar()
+Checkbutton(mainframe, text="R/W", variable=rw_tickbox_tkvar).grid(row = 8, column = 2)
+
+path_info = Label(mainframe, text="?")
+path_info.grid(row = 8, column = 3)
+CreateToolTip(path_info, text = "Choose the location to mount the folder to. Default is '/mnt/vol1'.\nTick R/W for write access. Default is read-only ")
+
 # Textbox to display the Dockerfile content
 Label(mainframe, text="Dockerfile:").grid(row = 9, column = 0)
 docker_file_content = Text(mainframe)
 docker_file_content.grid(row = 9, column = 1)
 docker_file_content.insert(END, get_dockerfile_text("Choose Template"))
 
-Button(mainframe, text='Run', command=lambda: DockerFileCreator.run_container(templates_tkvar.get(),docker_command.get(),docker_entrypoint.get(),docker_hostname.get(),docker_ports.get(),yes_tickbox_tkvar.get(),select_folder_tkvar.get())).grid(row=10, column=0)
+Button(mainframe, text='Run', command=lambda: DockerFileCreator.run_container(templates_tkvar.get(),docker_command.get(),docker_entrypoint.get(),docker_hostname.get(),docker_ports.get(),yes_tickbox_tkvar.get(),select_folder_tkvar.get(),docker_path.get(),rw_tickbox_tkvar.get())).grid(row=10, column=0)
 Button(mainframe, text='Build Image', command=lambda: DockerFileCreator.build_image(templates_tkvar.get())).grid(row=10, column=1)
 Button(mainframe, text='Save', command=save).grid(row=10, column=2)
 Button(mainframe, text='Save as', command=save_as).grid(row=10, column=3)

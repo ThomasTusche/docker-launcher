@@ -77,7 +77,6 @@ docker_templates.append("New Template")
 root = Tk()
 root.title("Docker Launcher")
 root.iconphoto(False, PhotoImage(file='../logo.png'))
-#root.iconbitmap("tt_logo.bmp")
 
 # creating the mainframe on which everythin is displayed
 mainframe = Frame(root)

@@ -1,5 +1,6 @@
 from tkinter import *
 
+# class to create the tootips if someone hovers over the question marks
 class ToolTip(object):
 
     def __init__(self, widget):

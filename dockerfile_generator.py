@@ -2,14 +2,7 @@ import docker
 from io import BytesIO
 from tkinter import messagebox
 class DockerFileCreator:
-
-    def __init__(self):
-        print("hallo")
-
-    @classmethod
-    def create_dockerfile(cls):
-        return
-    
+    # Build the docker file image and throws an error msg if it's not working
     @classmethod
     def build_image(cls, file): 
 
@@ -27,7 +20,7 @@ class DockerFileCreator:
         except:
             messagebox.showerror("error", "Couldn't find the image.\nPlease use a different template or build the image first.")
             
-
+    # runs the container if it can find the image
     @classmethod
     def run_container(cls, myimage, mycommand=None, myentrypoint=None, myhostname=None, port=None, deletion=False, mountfolder=None, mountpath=None, mountpermission=None):
         client = docker.from_env()
@@ -61,13 +54,3 @@ class DockerFileCreator:
                 messagebox.showerror("error", "Problems with running the container.\nPlease review your Dockerfile Template.")           
         except:
             messagebox.showerror("error", "Couldn't find the image.\nPlease use a different template or build the image first.")
-
-
-
-
-
-    @classmethod
-    def save_as(cls):
-        print("hello")
-
-#, auto_remove=True

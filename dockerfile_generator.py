@@ -50,7 +50,6 @@ class DockerFileCreator:
             mount = {mountfolder:{"bind":mountpath,"mode":mountpermission}}
         elif not mountfolder:
             mount = None
-        print("sometext")
         try:
             client.images.get(myimage)
 

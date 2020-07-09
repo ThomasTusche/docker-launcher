@@ -18,7 +18,7 @@ The GUI has options analog the docker run command.
 
 **Limitations**
 
-- Be carefull with the Command and Entrypoint command. I just checked it with simple "echo hello world" and nothing more sophisticated. You might encounter problems depending what you input here.
+- Be carefull with the Command and Entrypoint command. I just checked it with simple "echo hello world" or "/bin/bash script.sh" and nothing more sophisticated. You might encounter problems depending what you input here.
 - This script has a general error message if the container run fails. Problems within the Dockerfile and wrong parameters are all cause the same error, therefore it is not always easy to find a fix
 - The image you create from a Dockerfile has the same name as the file. You cannot specify any version number. If you want to create an image with a different name, you have to store the file with a different name
 - The dropdown menu is not updating. In order to see newly generated templates you have do reopen the programm.
